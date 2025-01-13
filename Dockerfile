@@ -1,21 +1,24 @@
 FROM python:3.9-slim
 
-# Install system dependencies
+# Install minimal dependencies
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
-    poppler-utils \
+    tesseract-ocr-eng \
+    tesseract-ocr-hin \
+    tesseract-ocr-fra \
+    tesseract-ocr-spa \
+    tesseract-ocr-deu \
+    tesseract-ocr-ita \
+    tesseract-ocr-por \
+    tesseract-ocr-rus \
+    tesseract-ocr-chi-sim \
+    tesseract-ocr-jpn \
     libgl1-mesa-glx \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
-
-# Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
-COPY app.py .
-
-# Command to run the application
-CMD ["python", "app.py"]
+COPY . .
+CMD ["python", "main.py"]
