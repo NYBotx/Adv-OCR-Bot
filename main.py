@@ -1,15 +1,23 @@
 # main.py
 import os
 import logging
-import asyncio
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, ChatAction
-from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
+from telegram.constants import ChatAction  # Updated import for versions >=20.0
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    MessageHandler,
+    CallbackQueryHandler,
+    filters,
+    ContextTypes,
+)
 import pytesseract
 from PIL import Image
 from io import BytesIO
 import cv2
 import numpy as np
 from dotenv import load_dotenv
+
 
 load_dotenv()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
