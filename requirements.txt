@@ -2,8 +2,6 @@ python-telegram-bot
 pillow
 pytesseract
 easyocr
-opencv-python-headless
-numpy
 motor
 aiohttp
 pdf2image
