@@ -1,13 +1,6 @@
-# Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
-# Set environment variables to avoid interactive prompts during package installation
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Set working directory inside the container
-WORKDIR /app
-
-# Install dependencies for Tesseract OCR and the required languages
+# Install required system dependencies
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     tesseract-ocr-eng \
@@ -53,18 +46,23 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr-mkd \
     tesseract-ocr-swa \
     tesseract-ocr-eng-old \
-    tesseract-ocr-yid \
-    && apt-get clean
+    tesseract-ocr-yid
 
-# Copy requirements.txt to the container and install Python dependencies
-COPY requirements.txt /app/
+# Set environment variables
+ENV LANG C.UTF-8
+
+# Install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your application code into the container
-COPY . /app/
+# Copy the rest of the application code
+COPY . /app
 
-# Expose the application port (optional, if you're using Flask or another web server)
+# Set working directory
+WORKDIR /app
+
+# Expose necessary ports if needed (depends on your application)
 EXPOSE 8080
 
-# Command to run the application (if using a script as entry point)
+# Start the application (Modify if needed)
 CMD ["python", "main.py"]
