@@ -11,7 +11,6 @@ from telegram.ext import (
     ContextTypes,
 )
 from pymongo import MongoClient
-from bson import ObjectId  # Import ObjectId
 import pytesseract
 from PIL import Image
 from io import BytesIO
@@ -99,8 +98,6 @@ class AnimatedOCRBot:
             image_file = await context.bot.get_file(photo.file_id)
             image_bytes = await image_file.download_as_bytearray()
 
-            image_id = images_collection.insert_one({"image": image_bytes}).inserted_id
-
             image = Image.open(BytesIO(image_bytes))
             img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
             img_cv = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
@@ -122,8 +119,8 @@ class AnimatedOCRBot:
 
             keyboard = [
                 [
-                    InlineKeyboardButton("🖼 View Image", callback_data=f'view_image:{image_id}'),
-                    InlineKeyboardButton("🗑 Delete Image", callback_data=f'delete_image:{image_id}')
+                    InlineKeyboardButton("🖼 View Image", callback_data='view_image'),
+                    InlineKeyboardButton("🗑 Delete Image", callback_data='delete_image')
                 ],
                 [
                     InlineKeyboardButton("🏠 Main Menu", callback_data='menu')
@@ -147,22 +144,16 @@ class AnimatedOCRBot:
         query = update.callback_query
         await query.answer()
 
-        action, image_id = query.data.split(":")
-        image_doc = images_collection.find_one({"_id": ObjectId(image_id)})
-
-        if not image_doc:
-            await query.edit_message_text("⚠️ Image not found or already deleted.")
-            return
+        action = query.data.split(":")[0]
 
         if action == 'view_image':
-            image_bytes = image_doc['image']
+            image_bytes = query.message.photo[-1].file_id
             await context.bot.send_photo(
                 chat_id=query.message.chat_id,
-                photo=BytesIO(image_bytes)
+                photo=image_bytes
             )
 
         elif action == 'delete_image':
-            images_collection.delete_one({"_id": ObjectId(image_id)})
             await query.edit_message_text("🗑 Image deleted successfully.")
 
     # Settings handlers
