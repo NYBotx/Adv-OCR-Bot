@@ -1,8 +1,11 @@
-python-telegram-bot==20.0
-pymongo==4.1.0
-pillow==9.0.0
-opencv-python==4.5.5.64
+# Python dependencies
+python-telegram-bot==20.5
+pymongo==4.3.3
+pillow==9.3.0
 pytesseract==0.3.10
-python-dotenv==0.19.2
-numpy==1.23.5
-bson==0.5.10
+opencv-python-headless==4.7.0.72
+numpy==1.24.2
+python-dotenv==1.0.0
+
+# Tesseract OCR Language Support
+tesseract==5.0.0  # Ensuring you have the correct Tesseract version for your OCR needs
