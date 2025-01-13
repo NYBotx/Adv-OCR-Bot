@@ -1,6 +1,7 @@
+# Use a specific version of Python as a base image
 FROM python:3.9-slim
 
-# Install required system dependencies
+# Install minimal dependencies including Tesseract OCR and its language packs
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     tesseract-ocr-eng \
@@ -13,56 +14,21 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr-rus \
     tesseract-ocr-chi-sim \
     tesseract-ocr-jpn \
-    tesseract-ocr-kor \
-    tesseract-ocr-ara \
-    tesseract-ocr-tur \
-    tesseract-ocr-ben \
-    tesseract-ocr-tam \
-    tesseract-ocr-tel \
-    tesseract-ocr-mar \
-    tesseract-ocr-guj \
-    tesseract-ocr-kan \
-    tesseract-ocr-mal \
-    tesseract-ocr-pol \
-    tesseract-ocr-swe \
-    tesseract-ocr-dut \
-    tesseract-ocr-vie \
-    tesseract-ocr-ukr \
-    tesseract-ocr-hrv \
-    tesseract-ocr-ces \
-    tesseract-ocr-bul \
-    tesseract-ocr-ell \
-    tesseract-ocr-tha \
-    tesseract-ocr-ind \
-    tesseract-ocr-lav \
-    tesseract-ocr-lit \
-    tesseract-ocr-est \
-    tesseract-ocr-slk \
-    tesseract-ocr-fin \
-    tesseract-ocr-heb \
-    tesseract-ocr-mal \
-    tesseract-ocr-srp \
-    tesseract-ocr-ron \
-    tesseract-ocr-mkd \
-    tesseract-ocr-swa \
-    tesseract-ocr-eng-old \
-    tesseract-ocr-yid
+    libgl1-mesa-glx \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables
-ENV LANG C.UTF-8
-
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application code
-COPY . /app
-
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Expose necessary ports if needed (depends on your application)
-EXPOSE 8080
+# Copy the requirements.txt file into the container
+COPY requirements.txt .
 
-# Start the application (Modify if needed)
+# Install Python dependencies from requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the project files into the container
+COPY . .
+
+# Define the command to run the bot when the container starts
 CMD ["python", "main.py"]
