@@ -1,4 +1,4 @@
-bot.run()import os
+import os
 import logging
 from telegram.constants import ChatAction
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
@@ -11,6 +11,7 @@ from telegram.ext import (
     ContextTypes,
 )
 from pymongo import MongoClient
+from bson import ObjectId  # Import ObjectId
 import pytesseract
 from PIL import Image
 from io import BytesIO
@@ -141,6 +142,7 @@ class AnimatedOCRBot:
                 "😔 An error occurred. Please try again with a different image."
             )
 
+    # Image action handlers
     async def handle_image_actions(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
@@ -163,6 +165,7 @@ class AnimatedOCRBot:
             images_collection.delete_one({"_id": ObjectId(image_id)})
             await query.edit_message_text("🗑 Image deleted successfully.")
 
+    # Settings handlers
     async def settings_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
@@ -202,22 +205,28 @@ class AnimatedOCRBot:
             parse_mode='Markdown'
         )
 
+    # Help and About handlers
+    async def help_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        await update.message.reply_text("ℹ️ *Help*: This bot extracts text from images in various languages with customizable settings.")
+
+    async def about_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        await update.message.reply_text(f"👤 *About*: This bot is developed by {OWNER_USERNAME}.")
+
     def run(self):
         application = Application.builder().token(TELEGRAM_TOKEN).build()
 
-    
-        
         # Add handlers
         application.add_handler(CommandHandler("start", self.start))
         application.add_handler(MessageHandler(filters.PHOTO, self.process_image))
         application.add_handler(CallbackQueryHandler(self.settings_handler, pattern='^settings$'))
         application.add_handler(CallbackQueryHandler(self.about_handler, pattern='^about$'))
         application.add_handler(CallbackQueryHandler(self.help_handler, pattern='^help$'))
-        
+        application.add_handler(CallbackQueryHandler(self.handle_image_actions, pattern='^view_image:'))
+        application.add_handler(CallbackQueryHandler(self.handle_image_actions, pattern='^delete_image:'))
+
         # Start bot
         application.run_polling()
 
 if __name__ == '__main__':
     bot = AnimatedOCRBot()
     bot.run()
-    
