@@ -1,10 +1,5 @@
 python-telegram-bot
-pillow
 pytesseract
-easyocr
-motor
-aiohttp
-pdf2image
-langdetect
-googletrans
+Pillow
+opencv-python-headless
 python-dotenv
