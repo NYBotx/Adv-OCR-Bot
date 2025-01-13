@@ -1,6 +1,5 @@
 python-telegram-bot==20.0
 pymongo>=3.11.0
-bson==0.5.10
 pytesseract==0.3.10
 Pillow==9.3.0
 opencv-python==4.6.0.66
